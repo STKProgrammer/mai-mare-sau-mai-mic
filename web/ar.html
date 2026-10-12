@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mai mare sau mai mic — AR</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/ar.css">
+  <!-- A-Frame 1.6.0 + AR.js 3.4.8, copiate local ca demo-ul sa mearga fara internet -->
+  <script src="vendor/aframe.min.js"></script>
+  <script src="vendor/aframe-ar.js"></script>
+</head>
+<body class="ar">
+  <a-scene
+    embedded
+    xr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true"
+    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono; cameraParametersUrl: vendor/arjs-data/camera_para.dat">
+    <a-marker id="marker" type="pattern" url="vendor/arjs-data/patt.hiro"
+      smooth="true" smooth-count="5" smooth-tolerance="0.01" smooth-threshold="2"></a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <div id="app" class="ar-overlay solid" aria-live="polite">
+    <section class="screen"><p class="muted">Se încarcă…</p></section>
+  </div>
+  <div id="cam-status">Pornesc camera… permite accesul când browserul întreabă.</div>
+
+  <footer class="credit ar-credit">
+    Date: <a href="https://osf.io/jd64p/" target="_blank" rel="noopener">The Upworthy Research Archive</a>
+    — J. N. Matias, K. Munger, M. Aubin Le Quere, C. Ebersole · CC BY 4.0
+  </footer>
+  <script type="module" src="js/ar-main.js"></script>
+</body>
+</html>

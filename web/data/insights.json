@@ -1,0 +1,94 @@
+{
+  "attribution": {
+    "dataset": "The Upworthy Research Archive",
+    "authors": "J. Nathan Matias, Kevin Munger, Marianne Aubin Le Quere, Charles Ebersole",
+    "url": "https://osf.io/jd64p/",
+    "license": "CC BY 4.0"
+  },
+  "method": "WLS logit(CTR), efecte fixe pe test, SE clusterizate pe test",
+  "packages": 11798,
+  "tests": 2594,
+  "features": [
+    {
+      "feature": "lungime_10cuv",
+      "label": "+10 cuvinte lungime",
+      "share": 1.0,
+      "lift": 0.1045,
+      "ci_lo": 0.0721,
+      "ci_hi": 0.1378,
+      "p_value": 5.814946969681933e-11
+    },
+    {
+      "feature": "superlativ",
+      "label": "Superlativ (best/worst/ever...)",
+      "share": 0.093,
+      "lift": 0.0529,
+      "ci_lo": 0.0224,
+      "ci_hi": 0.0843,
+      "p_value": 0.0005793393364815979
+    },
+    {
+      "feature": "numar",
+      "label": "Contine un numar",
+      "share": 0.17,
+      "lift": 0.0462,
+      "ci_lo": 0.0172,
+      "ci_hi": 0.076,
+      "p_value": 0.001641066930107334
+    },
+    {
+      "feature": "this_these",
+      "label": "Curiosity gap (this/these)",
+      "share": 0.258,
+      "lift": 0.0409,
+      "ci_lo": 0.0187,
+      "ci_hi": 0.0636,
+      "p_value": 0.000268829101162415
+    },
+    {
+      "feature": "persoana_1",
+      "label": "Persoana I (I/my/me)",
+      "share": 0.098,
+      "lift": 0.036,
+      "ci_lo": 0.0061,
+      "ci_hi": 0.0667,
+      "p_value": 0.017763391476863913
+    },
+    {
+      "feature": "tu",
+      "label": "Se adreseaza cititorului (you)",
+      "share": 0.248,
+      "lift": 0.0117,
+      "ci_lo": -0.0119,
+      "ci_hi": 0.0357,
+      "p_value": 0.33462479718688076
+    },
+    {
+      "feature": "citat",
+      "label": "Contine un citat",
+      "share": 0.078,
+      "lift": -0.0242,
+      "ci_lo": -0.0575,
+      "ci_hi": 0.0103,
+      "p_value": 0.16693380528935564
+    },
+    {
+      "feature": "intrebare",
+      "label": "Este o intrebare",
+      "share": 0.173,
+      "lift": -0.1,
+      "ci_lo": -0.1211,
+      "ci_hi": -0.0784,
+      "p_value": 2.9576640467613833e-18
+    },
+    {
+      "feature": "exclamare",
+      "label": "Semnul exclamarii",
+      "share": 0.021,
+      "lift": -0.1309,
+      "ci_lo": -0.18,
+      "ci_hi": -0.0789,
+      "p_value": 2.2598053132275872e-06
+    }
+  ]
+}

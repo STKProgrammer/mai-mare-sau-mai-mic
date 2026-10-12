@@ -1,0 +1,179 @@
+/* Overlay HTML peste camera (AR.js pune <video> si canvasul A-Frame sub el). */
+
+/* AR.js latește body (cover-fit pentru video), deci blocam scroll-ul si pe html */
+html { height: 100%; overflow: hidden; }
+body.ar { height: 100%; }
+
+body.ar {
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.ar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  padding: 16px 16px 36px;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+.ar-overlay button, .ar-overlay a, .ar-overlay input, .ar-overlay .hud, .ar-overlay aside,
+.ar-overlay .ar-fallback, .ar-overlay .calib { pointer-events: auto; }
+
+/* meniu si ecranul final: fundal opac peste camera */
+.ar-overlay.solid {
+  pointer-events: auto;
+  overflow-y: auto;
+  display: block;
+  background: rgba(14, 17, 32, 0.9);
+  backdrop-filter: blur(6px);
+}
+.ar-overlay.solid .screen { max-width: 1040px; margin: 0 auto; padding-top: 8px; }
+
+.ar-help { max-width: 640px; margin: 28px auto 0; color: var(--muted); font-size: .92rem; }
+.ar-help p { margin: 0 0 8px; }
+.ar-help b { color: var(--text); }
+
+/* ---------------- in joc */
+
+.ar-play { width: 100%; max-width: 1200px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; gap: 12px; }
+.ar-overlay .hud { background: rgba(23, 27, 46, 0.82); margin-bottom: 0; }
+
+.ar-marker-hint {
+  display: none;
+  align-self: center;
+  margin: 0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(23, 27, 46, 0.85);
+  border: 1px solid var(--noise);
+  font-size: .95rem;
+}
+.marker-lost .ar-marker-hint { display: block; }
+
+/* titlurile apar in HTML doar cand markerul nu e detectat */
+.ar-fallback { display: none; }
+.marker-lost .ar-fallback {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ar-fb-card {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: rgba(23, 27, 46, 0.9);
+  border: 2px solid var(--line);
+}
+.ar-fb-card.side-a { border-color: var(--a); }
+.ar-fb-card.side-b { border-color: var(--b); }
+.ar-fb-card p { margin: 0; color: var(--text); font-weight: 600; }
+.ar-fb-card .side { flex: none; }
+.ar-fb-chart { grid-column: 1 / -1; margin: 0; padding: 8px 14px; border-radius: var(--radius); background: rgba(23, 27, 46, 0.9); }
+.ar-fb-chart .chart { max-width: 460px; }
+
+.ar-controls {
+  margin-top: auto;
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+}
+.ar-q {
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(23, 27, 46, 0.85);
+  font-weight: 600;
+}
+.ar-pick {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: rgba(23, 27, 46, 0.9);
+  border: 2px solid var(--line);
+  color: var(--text);
+  font-weight: 700;
+  transition: transform .12s;
+}
+.ar-pick.side-a { border-color: var(--a); }
+.ar-pick.side-b { border-color: var(--b); }
+.ar-pick:hover, .ar-pick:focus-visible { transform: translateY(-2px); }
+.ar-pick .side { width: 36px; height: 36px; font-size: 1.2rem; }
+
+.ar-controls .noise-btn { background: rgba(23, 27, 46, 0.9); }
+.ar-calib { margin-top: auto; width: min(620px, 100%); align-self: center; }
+.ar-calib .calib { margin: 0; background: rgba(23, 27, 46, 0.92); padding: 12px 18px; gap: 8px; }
+
+.ar-explain {
+  margin-top: auto;
+  align-self: flex-end;
+  width: min(360px, 100%);
+  font-size: .9rem;
+  max-height: 62vh;
+  overflow: hidden;   /* doar explicatia face scroll, butonul ramane vizibil */
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  background: rgba(23, 27, 46, 0.93);
+  border: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.ar-explain-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ar-explain .flash { margin: 0; text-align: left; font-size: 1.3rem; }
+.ar-explain .verdict { font-size: .88rem; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.ar-explain .verdict p { margin-bottom: .5em; }
+.ar-explain .btn { align-self: flex-end; }
+.ar-explain > :not(.verdict) { flex-shrink: 0; }
+.ar-explain.collapsed figure, .ar-explain.collapsed .verdict { display: none; }
+.ar-toggle {
+  all: unset;
+  cursor: pointer;
+  font-size: .8rem;
+  color: var(--muted);
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.ar-toggle:hover, .ar-toggle:focus-visible { color: var(--text); border-color: var(--muted); }
+
+.ar-flash {
+  margin-top: auto;
+  align-self: center;
+  padding: 10px 26px;
+  border-radius: 999px;
+  background: rgba(23, 27, 46, 0.9);
+}
+
+/* ---------------- stare camera */
+
+#cam-status {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  max-width: min(520px, calc(100% - 32px));
+  padding: 14px 20px;
+  border-radius: var(--radius);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  text-align: center;
+}
+#cam-status.error { border-color: var(--lose); }
+#cam-status a { display: block; margin-top: 8px; }
+
+.ar-credit {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 11;
+  padding: 6px;
+  font-size: .7rem;
+  background: rgba(14, 17, 32, 0.6);
+}
+
+@media (max-width: 720px) {
+  .marker-lost .ar-fallback { grid-template-columns: 1fr; }
+  .ar-q { display: none; }
+  .ar-explain { width: 100%; max-height: 55vh; }
+}

@@ -1,0 +1,9 @@
+# date brute descarcate de data/prepare.py (se regenereaza automat)
+data/raw/
+
+# Python
+__pycache__/
+*.pyc
+
+# setari locale Claude Code
+.claude/settings.local.json
