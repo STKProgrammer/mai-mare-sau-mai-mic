@@ -5,15 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mai mare sau mai mic</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/quiz.css">
 </head>
-<body>
+<body class="quiz">
+  <!-- camera (in oglinda) + scheletul mainii, sub interfata -->
+  <video id="video" playsinline muted></video>
+  <canvas id="skeleton" aria-hidden="true"></canvas>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
   <main id="app" aria-live="polite">
-    <section class="screen"><p class="muted">Se încarcă…</p></section>
+    <section class="panel start"><p class="muted">Se încarcă…</p></section>
   </main>
+
+  <div id="status" class="status" role="status"></div>
   <footer class="credit">
     Date: <a href="https://osf.io/jd64p/" target="_blank" rel="noopener">The Upworthy Research Archive</a>
     — J. N. Matias, K. Munger, M. Aubin Le Quere, C. Ebersole · CC BY 4.0
   </footer>
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/quiz.js"></script>
 </body>
 </html>

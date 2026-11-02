@@ -23,6 +23,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/configure-pages@v6
+      # GitHub Pages pune cache 10 minute: adaugam ?v=<commit> la JS/CSS/JSON,
+      # ca dupa o publicare browserul sa nu amestece fisiere vechi cu cele noi
+      - name: Versiune in link-uri (cache busting)
+        run: python tools/cache_bust.py web "${GITHUB_SHA::8}"
       # site-ul e static: se publica direct folderul web/ (date deja generate de data/prepare.py)
       - uses: actions/upload-pages-artifact@v5
         with:

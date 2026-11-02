@@ -1,6 +1,12 @@
 // Logica jocului, fara DOM — aceeasi clasa e folosita si de stratul AR.
 
 export const MODES = {
+  quiz: {
+    label: 'Quiz',
+    description: '3 vieți, doar perechi cu diferență reală. 👍 = titlul A, 👎 = titlul B.',
+    lives: 3,
+    noiseRate: 0,
+  },
   classic: {
     label: 'Clasic',
     description: '3 vieți. Joci până le pierzi. Unele perechi sunt zgomot — acolo nu pierzi nimic, dar afli de ce.',

@@ -31,7 +31,13 @@ try {
   // Sursa imagine (ar-test.html) nu emite camera-init
   if (sceneEl.getAttribute('arjs')?.sourceType === 'image') status.remove();
 
+  // controlul cu mana porneste cand camera e gata (video-ul AR.js)
+  const attachHand = () => ui.hand.attach(document.getElementById('arjs-video'));
+  if (document.getElementById('arjs-video')?.srcObject) attachHand();
+  else window.addEventListener('camera-init', () => setTimeout(attachHand, 300), { once: true });
+
   applyTestParams(ui);
+  if (new URLSearchParams(location.search).has('debug')) window.__mmm = { ui, scene };
 } catch (err) {
   root.classList.add('solid');
   showLoadError(root, err);
