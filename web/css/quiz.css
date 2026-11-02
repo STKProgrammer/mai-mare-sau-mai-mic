@@ -1,0 +1,145 @@
+/* Quiz cu camera: video in fundal, scheletul mainii peste el, interfata semi-transparenta deasupra */
+
+body.quiz {
+  background: #000;
+  overflow-x: hidden;
+}
+
+#video, #skeleton {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+#video {
+  object-fit: cover;
+  transform: scaleX(-1);   /* oglinda, ca la camera frontala */
+  z-index: 0;
+  filter: brightness(0.85);
+}
+#skeleton { z-index: 1; pointer-events: none; }
+/* efectele AR (coroana, inimi, coloane) sunt deasupra interfetei, dar nu blocheaza nimic */
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
+
+body.quiz main {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+}
+
+.panel {
+  background: rgba(23, 27, 46, 0.86);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  backdrop-filter: blur(4px);
+}
+.panel.start { max-width: 620px; margin: 6vh auto 0; text-align: center; }
+.panel.start h1 { font-size: clamp(2rem, 5vw, 3rem); }
+.panel .big { font-size: 4.5rem; font-weight: 800; margin: 0; line-height: 1; }
+.record { color: var(--noise); }
+
+.legend { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin: 16px 0; }
+.legend span { padding: 10px 18px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); font-size: 1.15rem; font-weight: 700; }
+
+/* "buton" care se umple cand tii gestul */
+.go {
+  position: relative;
+  overflow: hidden;
+  margin: 18px auto 6px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: var(--panel-2);
+  border: 2px solid var(--win);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.bar {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 6px;
+  background: var(--win);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.go .bar { height: 100%; opacity: 0.25; }
+
+/* ---------------- intrebare */
+
+body.quiz .hud { background: rgba(23, 27, 46, 0.82); }
+.q-title {
+  text-align: center;
+  font-size: 1.3rem;
+  margin: 0 auto 14px;
+  padding: 8px 18px;
+  width: fit-content;
+  border-radius: 999px;
+  background: rgba(23, 27, 46, 0.82);
+}
+.q-title.result { font-weight: 800; font-size: 1.6rem; }
+.q-title.correct { color: var(--win); }
+.q-title.wrong { color: var(--lose); }
+
+.q-duel { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.q-card {
+  position: relative;
+  overflow: hidden;
+  padding: 18px 20px 22px;
+  border-radius: var(--radius);
+  background: rgba(23, 27, 46, 0.86);
+  border: 2px solid var(--line);
+  backdrop-filter: blur(4px);
+  color: var(--text);   /* nu culoarea laturii (A albastru / B portocaliu) din style.css */
+}
+.q-card.side-a { border-color: var(--a); }
+.q-card.side-b { border-color: var(--b); }
+.q-card.side-a .bar { background: var(--a); height: 8px; }
+.q-card.side-b .bar { background: var(--b); height: 8px; }
+.q-card.win { border-color: var(--win); background: rgba(31, 70, 52, 0.88); }
+.q-card.lose { opacity: 0.75; border-color: var(--line); }
+.q-card.chosen { box-shadow: 0 0 0 4px rgba(236, 238, 248, 0.25); }
+.q-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.q-icon { font-size: 1.8rem; }
+.q-side { font-weight: 800; font-size: 1.2rem; }
+.side-a .q-side { color: var(--a); }
+.side-b .q-side { color: var(--b); }
+.q-picked { margin-left: auto; font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.q-card .headline { font-size: clamp(1.05rem, 2vw, 1.35rem); }
+.q-ctr { margin: 12px 0 0; font-size: 1.5rem; font-weight: 800; }
+.q-ctr .muted { font-size: .8rem; font-weight: 400; }
+.q-card.win .q-ctr { color: var(--win); }
+
+.panel.explain { margin-top: 16px; display: block; }   /* style.css are .explain pe 2 coloane */
+.panel.explain p { margin: 0; }
+.panel.explain .go { margin-bottom: 0; text-align: center; }
+
+/* ---------------- stare camera / gesturi */
+
+.status {
+  position: fixed;
+  left: 12px; bottom: 34px;
+  z-index: 5;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: .85rem;
+  font-weight: 600;
+  background: rgba(23, 27, 46, 0.88);
+  border: 1px solid var(--line);
+}
+.status:empty { display: none; }
+.status.hand { border-color: var(--win); }
+.status.nohand, .status.loading, .status.camera { border-color: var(--noise); }
+.status.error, .status.nocam { border-color: var(--lose); }
+
+body.quiz .credit {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 4;
+  padding: 6px;
+  font-size: .7rem;
+  background: rgba(14, 17, 32, 0.6);
+}
+
+@media (max-width: 720px) {
+  .q-duel { grid-template-columns: 1fr; }
+}

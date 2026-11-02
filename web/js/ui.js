@@ -3,6 +3,7 @@
 import { Game, MODES, brierPoints } from './game.js';
 import * as S from './stats.js';
 import { board, cleanName, NAME_MAX } from './leaderboard.js';
+import { ARStudio } from './ar-studio.js';
 
 const FEATURE_LABELS = {
   numar: 'Conține un număr',
@@ -75,6 +76,8 @@ export class UI {
     else if (action === 'next') this.next();
     else if (action === 'menu') this.showMenu();
     else if (action === 'leaderboard') this.showLeaderboard();
+    else if (action === 'toggle-cam') this.toggleCameraGestures?.();
+    else if (action === 'studio') this.showStudio();
   }
 
   onKey(e) {
@@ -121,7 +124,14 @@ export class UI {
         <h1>Mai mare <span class="or">sau</span> mai mic</h1>
         <p class="lead">Două titluri, aceeași poveste, aceeași imagine. Unul a adus mai multe click-uri.
           <br>Ghicești care? <b>${S.int(this.pairs.length)}</b> de perechi de titluri din teste A/B reale, Upworthy 2013–2015.</p>
-        <div class="modes">${modes}</div>
+        <div class="modes">
+          ${modes}
+          <button class="mode mode-studio" data-action="studio">
+            <span class="mode-name">🎨 Desenează în 3D (Joc 3 min)</span>
+            <span class="mode-desc">Primești o provocare aleatorie (rachetă, pisică, coroană etc.). Ai 3 minute să o sculptezi în aer doar cu mâinile! 🤏 Ciupit = Creion, ✌️ Peace = Culoare, ✊ Pumn = Undo.</span>
+            <span class="mode-best"><b class="badge-studio">NOU · SPEED DRAW 3D</b></span>
+          </button>
+        </div>
         <ul class="rules">
           <li><kbd>←</kbd>/<kbd>A</kbd> titlul A, <kbd>→</kbd>/<kbd>B</kbd> titlul B, <kbd>Enter</kbd> mai departe</li>
           <li>Pro: <kbd>↓</kbd>/<kbd>N</kbd> zgomot · Calibrare: <kbd>←</kbd>/<kbd>→</kbd> cât de sigur ești, <kbd>Enter</kbd> trimiți</li>
@@ -135,6 +145,8 @@ export class UI {
     return `
       <p class="switch">
         <button class="linklike" data-action="leaderboard">Clasament</button>
+        · <button class="linklike" data-action="studio">🎨 Desenează în 3D (3 min)</button>
+        · <button class="linklike" data-action="toggle-cam">✋ Gesturi cameră</button>
         · <a href="ar.html">Joacă în AR, cu camera →</a>
       </p>`;
   }
@@ -156,6 +168,35 @@ export class UI {
         <div class="actions"><button class="btn" data-action="menu">Înapoi <kbd>Esc</kbd></button></div>
       </section>`;
     for (const key of Object.keys(MODES)) this.loadBoard(key);
+  }
+
+  async showStudio() {
+    this.stopClock();
+    this.game = null;
+    if (this.studio) this.studio.destroy();
+
+    // Daca e in modul 2D si camera nu e pornita, o pornim automat
+    if (this.toggleCameraGestures && !document.getElementById('webcam-video')) {
+      await this.toggleCameraGestures();
+    }
+
+    const { ARStudio } = await import('./ar-studio.js');
+    this.root.innerHTML = '';
+    this.studio = new ARStudio(this.root, {
+      marker: this.scene?.marker || null,
+      onExit: () => {
+        this.studio = null;
+        this.showMenu();
+      },
+    });
+  }
+
+  closeStudio() {
+    if (this.studio) {
+      this.studio.destroy();
+      this.studio = null;
+    }
+    this.showMenu();
   }
 
   async loadBoard(mode, highlight = null) {
@@ -237,9 +278,15 @@ export class UI {
         ${tags ? `<div class="tags">${tags}</div>` : ''}
         ${choice === side ? '<span class="picked">alegerea ta</span>' : ''}`;
     }
+    const thumbIcon = side === 'A' ? '👍' : '👎';
+    const gestureHint = side === 'A' ? '👍 Sus · 👈 Stânga · 😉 Ochi stâng' : '👎 Jos · 👉 Dreapta · 😉 Ochi drept';
+
     return `
       <button class="${cls.join(' ')}" data-action="choose" data-arg="${side}" ${reveal ? 'disabled' : ''}>
-        <span class="side">${side}</span>
+        <div class="card-header">
+          <span class="side"><span class="gesture-icon">${thumbIcon}</span> ${side}</span>
+          <span class="card-gesture-hint">${gestureHint}</span>
+        </div>
         <p class="headline">${esc(entry.headline)}</p>
         ${extra}
       </button>`;
